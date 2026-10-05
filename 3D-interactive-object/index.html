@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Interactive Website</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="loading">
+    <div class="loader"></div>
+    <p>Loading assets... <span id="progress">0%</span></p>
+  </div>
+  
+  <canvas id="canvas"></canvas>
+  
+  <!-- Info Panel -->
+  <div id="info">
+    <h3>3D Interactive Website</h3>
+    <p><strong>Navigasi:</strong></p>
+    <ul>
+      <li>Klik kiri + drag = Rotasi</li>
+      <li>Klik kanan + drag = Geser</li>
+      <li>Scroll = Zoom</li>
+    </ul>
+    <p><strong>Keyboard:</strong></p>
+    <ul>
+      <li>W = Toggle wireframe</li>
+      <li>R = Reset camera</li>
+    </ul>
+    <p class="hint">Klik objek untuk interaksi!</p>
+  </div>
+  
+  <script type="module" src="main.js"></script>
+</body>
+</html>

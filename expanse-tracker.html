@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<!-- DOCTYPE: memberitahu browser bahwa ini adalah file HTML versi 5 -->
+
+<html lang="id">
+<!-- <html> : tag pembuka, semua isi halaman ada di dalam sini -->
+<!-- lang="id" : memberitahu browser bahwa bahasa halaman ini adalah Indonesia -->
+
+<head>
+  <!-- <head> : bagian kepala, berisi pengaturan halaman yang TIDAK ditampilkan ke user -->
+
+  <meta charset="UTF-8" />
+  <!-- <meta charset> : mengatur encoding karakter agar huruf seperti é, ñ, dll bisa muncul dengan benar -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- <meta viewport> : membuat halaman responsif di HP. Tanpa ini, tampilan di HP akan kecil sekali -->
+
+  <title>Expense Tracker</title>
+  <!-- <title> : teks yang muncul di tab browser -->
+
+  <style>
+    /* =============================================
+       CSS = mengatur TAMPILAN (warna, ukuran, jarak)
+       Selector { property: value; }
+       ============================================= */
+
+    * {
+      /* * = berlaku untuk SEMUA elemen di halaman */
+      box-sizing: border-box;
+      /* box-sizing: padding dan border dihitung di DALAM ukuran elemen, bukan di luar */
+      margin: 0;
+      /* margin: jarak di luar elemen. Diset 0 agar tidak ada jarak default dari browser */
+      padding: 0;
+      /* padding: jarak di dalam elemen. Diset 0 untuk reset default browser */
+    }
+
+    body {
+      /* body = mengatur tampilan seluruh halaman */
+      font-family: 'Segoe UI', sans-serif;
+      /* font-family: jenis huruf yang dipakai. 'Segoe UI' prioritas utama, sans-serif cadangan */
+      background: #f0f2f5;
+      /* background: warna latar belakang halaman (abu-abu muda) */
+      color: #1a1a1a;
+      /* color: warna teks default di seluruh halaman (hampir hitam) */
+      min-height: 100vh;
+      /* min-height: tinggi minimum halaman = 100% tinggi layar (vh = viewport height) */
+      padding: 2rem 1rem;
+      /* padding: jarak dalam body. 2rem atas-bawah, 1rem kiri-kanan */
+    }
+
+    /* ---- CONTAINER ---- */
+    .container {
+      /* .container = class, dipanggil dengan class="container" di HTML */
+      max-width: 600px;
+      /* max-width: lebar maksimal 600px, tidak akan lebih lebar dari ini */
+      margin: 0 auto;
+      /* margin: 0 auto = kotak ini akan berada di tengah halaman */
+    }
+
+    h1 {
+      /* h1 = heading terbesar, judul utama */
+      font-size: 22px;
+      font-weight: 600;
+      /* font-weight: ketebalan huruf. 400=normal, 600=tebal */
+      margin-bottom: 1.5rem;
+      /* margin-bottom: jarak bawah h1 ke elemen berikutnya */
+      color: #1a1a1a;
+    }
+
+    /* ---- KARTU RINGKASAN (Saldo, Pemasukan, Pengeluaran) ---- */
+    .summary {
+      display: grid;
+      /* display grid: membagi ruang menjadi kolom-kolom */
+      grid-template-columns: repeat(3, 1fr);
+      /* repeat(3, 1fr): buat 3 kolom dengan lebar yang sama (1fr = 1 bagian) */
+      gap: 12px;
+      /* gap: jarak antar kolom */
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      /* kartu putih untuk menampilkan angka ringkasan */
+      background: #ffffff;
+      /* background putih */
+      border-radius: 12px;
+      /* border-radius: sudut kartu dibuat melengkung (makin besar = makin bulat) */
+      padding: 1rem;
+      /* padding: jarak teks dengan tepi kartu */
+      border: 1px solid #e8e8e8;
+      /* border: garis tepi kartu (1px tebal, solid/tidak putus, warna abu) */
+    }
+
+    .card-label {
+      /* label kecil di atas angka, misal "Saldo" */
+      font-size: 12px;
+      /* font-size: ukuran huruf */
+      color: #888888;
+      /* color: warna abu-abu untuk label */
+      margin-bottom: 4px;
+    }
+
+    .card-value {
+      /* angka besar di dalam kartu */
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .card-value.income {
+      /* .income ditambahkan ke .card-value khusus untuk pemasukan */
+      color: #1D9E75;
+      /* warna hijau untuk pemasukan */
+    }
+
+    .card-value.expense {
+      /* .expense ditambahkan ke .card-value khusus untuk pengeluaran */
+      color: #E24B4A;
+      /* warna merah untuk pengeluaran */
+    }
+
+    /* ---- FORM TAMBAH TRANSAKSI ---- */
+    .form-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid #e8e8e8;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      /* buat 2 kolom dengan lebar sama, untuk menaruh 2 input berdampingan */
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      /* wrapper untuk label + input */
+      display: flex;
+      /* display flex: susun elemen secara fleksibel */
+      flex-direction: column;
+      /* flex-direction column: susun label di atas, input di bawah */
+      gap: 5px;
+      /* gap: jarak antara label dan input */
+    }
+
+    .form-group label {
+      /* label teks kecil di atas input */
+      font-size: 12px;
+      color: #888888;
+    }
+
+    .form-group input,
+    .form-group select {
+      /* input = kotak teks, select = dropdown pilihan */
+      padding: 8px 10px;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #1a1a1a;
+      background: #fafafa;
+      outline: none;
+      /* outline none: hilangkan garis biru default browser saat input diklik */
+      width: 100%;
+      /* width 100%: lebarnya mengisi penuh kolom yang tersedia */
+      transition: border 0.2s;
+      /* transition: animasi perubahan border saat diklik (0.2 detik) */
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      /* :focus = saat input sedang diklik/aktif */
+      border-color: #7F77DD;
+      /* garis border berubah jadi ungu saat input aktif */
+      background: #ffffff;
+    }
+
+    .btn-add {
+      /* tombol tambah transaksi */
+      width: 100%;
+      padding: 10px;
+      background: #7F77DD;
+      /* background ungu */
+      color: #ffffff;
+      /* teks putih */
+      border: none;
+      /* border none: tidak ada garis tepi */
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      /* cursor pointer: kursor berubah jadi tangan saat hover di tombol */
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+
+    .btn-add:hover {
+      /* :hover = saat mouse berada di atas tombol */
+      background: #534AB7;
+      /* warna tombol lebih gelap saat di-hover */
+    }
+
+    /* ---- DAFTAR TRANSAKSI ---- */
+    .list-header {
+      display: flex;
+      /* flex: susun elemen secara horizontal */
+      justify-content: space-between;
+      /* space-between: elemen pertama ke kiri, elemen terakhir ke kanan */
+      align-items: center;
+      /* align-items center: sejajarkan secara vertikal */
+      margin-bottom: 10px;
+    }
+
+    .list-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn-clear {
+      /* tombol "Hapus semua" */
+      font-size: 12px;
+      color: #E24B4A;
+      /* teks merah */
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .item {
+      /* satu baris transaksi */
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      /* nama di kiri, nominal di kanan */
+      align-items: center;
+    }
+
+    .item-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .item-meta {
+      /* info kecil di bawah nama: kategori & tanggal */
+      font-size: 12px;
+      color: #aaaaaa;
+      margin-top: 2px;
+    }
+
+    .item-right {
+      /* sisi kanan item: nominal + tombol hapus */
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-amount {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .item-amount.income { color: #1D9E75; }
+    .item-amount.expense { color: #E24B4A; }
+
+    .btn-del {
+      /* tombol silang untuk hapus satu transaksi */
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #cccccc;
+      font-size: 20px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .btn-del:hover { color: #E24B4A; }
+
+    .empty {
+      /* tampilan saat belum ada transaksi */
+      text-align: center;
+      padding: 2rem;
+      font-size: 14px;
+      color: #bbbbbb;
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid #e8e8e8;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <body> : semua konten yang TERLIHAT oleh user ada di sini -->
+
+  <div class="container">
+    <!-- <div> : kotak pembungkus, tidak punya tampilan sendiri -->
+    <!-- class="container" : menggunakan CSS .container yang sudah dibuat di atas -->
+
+    <h1>💰 Expense Tracker</h1>
+    <!-- <h1> : judul halaman, teks paling besar -->
+
+    <!-- ======= BAGIAN RINGKASAN ======= -->
+    <div class="summary">
+      <!-- div.summary: wrapper grid 3 kolom untuk 3 kartu ringkasan -->
+
+      <div class="card">
+        <!-- kartu pertama: SALDO -->
+        <div class="card-label">Saldo</div>
+        <!-- teks kecil "Saldo" -->
+        <div class="card-value" id="balance">Rp 0</div>
+        <!-- id="balance": penanda unik agar JavaScript bisa menemukan & mengubah teks ini -->
+      </div>
+
+      <div class="card">
+        <!-- kartu kedua: PEMASUKAN -->
+        <div class="card-label">Pemasukan</div>
+        <div class="card-value income" id="total-income">Rp 0</div>
+        <!-- class="income": teks berwarna hijau sesuai CSS .card-value.income -->
+        <!-- id="total-income": JavaScript akan mengisi angka pemasukan di sini -->
+      </div>
+
+      <div class="card">
+        <!-- kartu ketiga: PENGELUARAN -->
+        <div class="card-label">Pengeluaran</div>
+        <div class="card-value expense" id="total-expense">Rp 0</div>
+        <!-- id="total-expense": JavaScript akan mengisi angka pengeluaran di sini -->
+      </div>
+    </div>
+    <!-- akhir .summary -->
+
+    <!-- ======= FORM TAMBAH TRANSAKSI ======= -->
+    <div class="form-card">
+
+      <div class="form-title">Tambah Transaksi</div>
+
+      <div class="form-row">
+        <!-- baris pertama form: Nama & Jumlah berdampingan -->
+
+        <div class="form-group">
+          <label>Nama</label>
+          <!-- <label> : teks keterangan di atas input -->
+          <input type="text" id="inp-name" placeholder="Gaji, Makan siang..." />
+          <!-- type="text" : input untuk mengetik teks bebas -->
+          <!-- id="inp-name" : JavaScript akan ambil nilainya lewat id ini -->
+          <!-- placeholder : teks abu-abu contoh yang muncul saat input kosong -->
+        </div>
+
+        <div class="form-group">
+          <label>Jumlah (Rp)</label>
+          <input type="number" id="inp-amount" placeholder="50000" min="0" />
+          <!-- type="number" : input khusus angka, tidak bisa ketik huruf -->
+          <!-- min="0" : nilai minimum adalah 0, tidak boleh negatif -->
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- baris kedua form: Tipe & Kategori berdampingan -->
+
+        <div class="form-group">
+          <label>Tipe</label>
+          <select id="inp-type">
+            <!-- <select> : dropdown pilihan -->
+            <!-- id="inp-type" : JavaScript ambil nilai yang dipilih lewat id ini -->
+            <option value="income">Pemasukan</option>
+            <!-- <option> : satu pilihan di dalam dropdown -->
+            <!-- value="income" : nilai yang dikirim ke JavaScript (bukan yang ditampilkan ke user) -->
+            <option value="expense">Pengeluaran</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Kategori</label>
+          <select id="inp-cat">
+            <!-- id="inp-cat" : JavaScript ambil kategori yang dipilih lewat id ini -->
+            <option value="Makanan">Makanan</option>
+            <option value="Transport">Transport</option>
+            <option value="Hiburan">Hiburan</option>
+            <option value="Gaji">Gaji</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-add" onclick="addTransaction()">+ Tambah Transaksi</button>
+      <!-- <button> : tombol yang bisa diklik -->
+      <!-- onclick="addTransaction()" : saat diklik, jalankan fungsi addTransaction() di JavaScript -->
+    </div>
+    <!-- akhir .form-card -->
+
+    <!-- ======= DAFTAR TRANSAKSI ======= -->
+    <div class="list-header">
+      <div class="list-title">Riwayat Transaksi</div>
+      <button class="btn-clear" onclick="clearAll()">Hapus semua</button>
+      <!-- onclick="clearAll()" : saat diklik, jalankan fungsi clearAll() di JavaScript -->
+    </div>
+
+    <div id="list"></div>
+    <!-- id="list" : kotak kosong ini akan DIISI oleh JavaScript dengan daftar transaksi -->
+    <!-- Awalnya kosong, JavaScript yang bertanggung jawab mengisi isinya -->
+
+  </div>
+  <!-- akhir .container -->
+
+
+  <!-- ======================================================
+       JAVASCRIPT
+       Letaknya di bawah HTML agar semua elemen sudah ada
+       sebelum JavaScript mulai berjalan
+       ====================================================== -->
+  <script>
+
+    // ============================================
+    // FUNGSI 1: getTransactions()
+    // Tugasnya: AMBIL data dari localStorage
+    // ============================================
+    function getTransactions() {
+
+      try {
+        // try: coba jalankan kode di dalam. Kalau error, lanjut ke catch
+        
+        const data = localStorage.getItem("transactions")
+        // localStorage.getItem("transactions"):
+        // - localStorage = tempat penyimpanan di browser
+        // - getItem("transactions") = ambil data dengan nama/key "transactions"
+        // - Hasilnya berupa TEKS (string), contoh: '[{"id":"1","name":"Gaji"}]'
+        // - Kalau belum ada data, hasilnya null
+
+        return JSON.parse(data) || []
+        // JSON.parse(data): ubah teks → array of object
+        // Contoh: '[{"id":"1"}]' → [{id: "1"}]
+        // || [] : kalau data null/kosong, kembalikan array kosong []
+        // Jadi fungsi ini SELALU mengembalikan array (bisa kosong, bisa isi)
+
+      } catch(e) {
+        // catch: kalau terjadi error di dalam try, masuk sini
+        // e = informasi errornya (kita abaikan di sini)
+        return []
+        // kalau error, kembalikan array kosong agar aplikasi tidak crash
+      }
+    }
+
+
+    // ============================================
+    // FUNGSI 2: saveTransactions(data)
+    // Tugasnya: SIMPAN data ke localStorage
+    // Parameter: data = array transaksi yang akan disimpan
+    // ============================================
+    function saveTransactions(data) {
+
+      const dataString = JSON.stringify(data)
+      // JSON.stringify(data): ubah array of object → teks
+      // Kenapa? Karena localStorage HANYA bisa menyimpan teks
+      // Contoh: [{id:"1", name:"Gaji"}] → '[{"id":"1","name":"Gaji"}]'
+
+      localStorage.setItem("transactions", dataString)
+      // localStorage.setItem(key, value):
+      // - key = "transactions" (nama/label penyimpanannya)
+      // - value = dataString (isi datanya dalam bentuk teks)
+      // Data ini tersimpan di browser dan TIDAK hilang walau di-refresh
+    }
+
+
+    // ============================================
+    // FUNGSI 3: formatRp(num)
+    // Tugasnya: ubah angka biasa → format Rupiah
+    // Contoh: 50000 → "Rp 50.000"
+    // ============================================
+    function formatRp(num) {
+      return "Rp " + Number(num).toLocaleString("id-ID")
+      // Number(num): pastikan num adalah angka (bukan teks)
+      // .toLocaleString("id-ID"): format angka sesuai aturan Indonesia
+      // "id-ID" menghasilkan pemisah ribuan dengan titik: 50000 → "50.000"
+      // "Rp " + ... : tambahkan teks "Rp " di depannya
+    }
+
+
+    // ============================================
+    // FUNGSI 4: render()
+    // Tugasnya: TAMPILKAN semua data ke layar
+    // Ini fungsi terpenting - dipanggil setiap ada perubahan data
+    // ============================================
+    function render() {
+
+      // --- Langkah 1: Ambil data terbaru dari localStorage ---
+      const data = getTransactions()
+      // Panggil fungsi getTransactions() yang sudah dibuat di atas
+      // Hasilnya disimpan ke variabel 'data' (array of object)
+
+      // --- Langkah 2: Hitung total pemasukan dan pengeluaran ---
+      let income = 0
+      let expense = 0
+      // let: deklarasi variabel yang nilainya bisa berubah
+      // Dimulai dari 0, akan ditambah di loop bawah
+
+      data.forEach(function(t) {
+        // .forEach(): looping/perulangan untuk setiap item di array
+        // t = satu transaksi (objek), contoh: {id:"1", name:"Gaji", type:"income", amount:5000000}
+
+        if (t.type === "income") {
+          // if: kondisi. Kalau tipe transaksi adalah "income"...
+          income = income + t.amount
+          // tambahkan nominal transaksi ke total income
+          // t.amount: akses properti 'amount' dari objek t
+        } else {
+          // else: kalau kondisi di atas tidak terpenuhi (berarti "expense")
+          expense = expense + t.amount
+          // tambahkan ke total expense
+        }
+      })
+
+      // --- Langkah 3: Tampilkan angka ke elemen HTML ---
+      document.getElementById("balance").textContent = formatRp(income - expense)
+      // document.getElementById("balance"): cari elemen HTML dengan id="balance"
+      // .textContent: ubah ISI TEKS elemen tersebut
+      // formatRp(income - expense): hitung saldo (pemasukan - pengeluaran), lalu format Rupiah
+
+      document.getElementById("total-income").textContent = formatRp(income)
+      // tampilkan total pemasukan ke elemen id="total-income"
+
+      document.getElementById("total-expense").textContent = formatRp(expense)
+      // tampilkan total pengeluaran ke elemen id="total-expense"
+
+      // --- Langkah 4: Tampilkan daftar transaksi ---
+      const listEl = document.getElementById("list")
+      // cari elemen <div id="list"> yang akan kita isi
+
+      if (data.length === 0) {
+        // .length: jumlah item dalam array
+        // Kalau tidak ada transaksi sama sekali...
+        listEl.innerHTML = '<div class="empty">Belum ada transaksi. Coba tambah dulu!</div>'
+        // innerHTML: ubah ISI HTML elemen (bisa berisi tag HTML)
+        // Tampilkan pesan kosong
+        return
+        // return: hentikan fungsi di sini, tidak lanjut ke bawah
+      }
+
+      // Kalau ada transaksi, buat HTML untuk setiap transaksi
+      const htmlList = [...data].reverse().map(function(t) {
+        // [...data]: buat salinan array (agar array asli tidak berubah)
+        // .reverse(): balik urutan array → transaksi terbaru tampil di atas
+        // .map(): ubah setiap item array menjadi sesuatu yang lain
+        // Di sini, setiap objek transaksi diubah menjadi teks HTML
+
+        return `
+          <div class="item">
+            <div>
+              <div class="item-name">${t.name}</div>
+              <!-- ${t.name}: template literal, masukkan nilai t.name ke dalam teks HTML -->
+              <div class="item-meta">${t.cat} · ${t.date}</div>
+            </div>
+            <div class="item-right">
+              <div class="item-amount ${t.type}">
+                <!-- ${t.type}: akan menghasilkan class "income" atau "expense" -->
+                ${t.type === "income" ? "+" : "-"}${formatRp(t.amount)}
+                <!-- kondisi ternary: kalau income → tampilkan "+", kalau expense → "-" -->
+              </div>
+              <button class="btn-del" onclick="deleteTransaction('${t.id}')">×</button>
+              <!-- onclick="deleteTransaction('${t.id}')": 
+                   saat tombol × diklik, panggil deleteTransaction dengan id transaksi ini -->
+            </div>
+          </div>
+        `
+        // Backtick ` ` (template literal): memungkinkan teks multi-baris dan ${variabel}
+      })
+
+      listEl.innerHTML = htmlList.join("")
+      // .join(""): gabungkan semua string HTML dalam array menjadi satu string panjang
+      // lalu masukkan ke dalam <div id="list">
+    }
+
+
+    // ============================================
+    // FUNGSI 5: addTransaction()
+    // Tugasnya: tambah transaksi baru
+    // Dipanggil saat tombol "+ Tambah Transaksi" diklik
+    // ============================================
+    function addTransaction() {
+
+      // --- Langkah 1: Ambil nilai dari form ---
+      const name = document.getElementById("inp-name").value.trim()
+      // .value: ambil apa yang diketik user di input
+      // .trim(): hapus spasi di awal dan akhir teks
+
+      const amount = document.getElementById("inp-amount").value
+      // ambil nilai input jumlah (masih berupa teks/string)
+
+      const type = document.getElementById("inp-type").value
+      // ambil pilihan tipe: "income" atau "expense"
+
+      const cat = document.getElementById("inp-cat").value
+      // ambil pilihan kategori
+
+      // --- Langkah 2: Validasi (pastikan form tidak kosong) ---
+      if (!name || !amount || Number(amount) <= 0) {
+        // !name: true kalau name kosong atau undefined
+        // !amount: true kalau amount kosong
+        // Number(amount) <= 0: true kalau angkanya 0 atau negatif
+        // Kondisi: kalau SALAH SATU dari atas terpenuhi...
+        alert("Nama dan jumlah harus diisi!")
+        // alert(): tampilkan popup pesan ke user
+        return
+        // hentikan fungsi, jangan lanjut
+      }
+
+      // --- Langkah 3: Buat objek transaksi baru ---
+      const newTransaction = {
+        // object literal: kumpulan data dalam format { key: value }
+
+        id: Date.now().toString(),
+        // Date.now(): angka milidetik saat ini sejak 1 Januari 1970
+        // Contoh: 1703123456789
+        // Ini UNIK karena setiap milidetik berbeda nilainya
+        // .toString(): ubah angka → teks karena kita butuh string untuk id
+        // Fungsinya: penanda unik tiap transaksi, dipakai saat hapus
+
+        name: name,
+        // nama transaksi dari input user
+
+        amount: Number(amount),
+        // Number(): ubah teks "50000" → angka 50000
+        // Perlu diubah karena .value selalu mengembalikan string
+
+        type: type,
+        // "income" atau "expense"
+
+        cat: cat,
+        // kategori yang dipilih
+
+        date: new Date().toLocaleDateString("id-ID", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        })
+        // new Date(): buat objek tanggal sekarang
+        // .toLocaleDateString(): ubah ke format teks tanggal
+        // "id-ID": format Indonesia
+        // Hasilnya contoh: "25 Des 2024"
+      }
+
+      // --- Langkah 4: Tambahkan ke array dan simpan ---
+      const data = getTransactions()
+      // ambil semua transaksi yang sudah ada
+
+      data.push(newTransaction)
+      // .push(): tambahkan newTransaction ke akhir array data
+
+      saveTransactions(data)
+      // simpan array yang sudah ditambahkan ke localStorage
+
+      // --- Langkah 5: Bersihkan form setelah berhasil ---
+      document.getElementById("inp-name").value = ""
+      // kosongkan input nama
+      document.getElementById("inp-amount").value = ""
+      // kosongkan input jumlah
+
+      // --- Langkah 6: Perbarui tampilan ---
+      render()
+      // panggil render() agar tampilan diperbarui dengan data terbaru
+    }
+
+
+    // ============================================
+    // FUNGSI 6: deleteTransaction(id)
+    // Tugasnya: hapus SATU transaksi berdasarkan id-nya
+    // Parameter: id = id transaksi yang akan dihapus
+    // ============================================
+    function deleteTransaction(id) {
+
+      const data = getTransactions()
+      // ambil semua transaksi
+
+      const dataFiltered = data.filter(function(t) {
+        return t.id !== id
+        // .filter(): buat array BARU yang hanya berisi item yang lolos kondisi
+        // t.id !== id: loloskan semua transaksi yang id-nya BUKAN id yang dihapus
+        // Hasilnya: array baru tanpa transaksi yang dihapus
+      })
+
+      saveTransactions(dataFiltered)
+      // simpan array yang sudah dikurangi
+
+      render()
+      // perbarui tampilan
+    }
+
+
+    // ============================================
+    // FUNGSI 7: clearAll()
+    // Tugasnya: hapus SEMUA transaksi
+    // Dipanggil saat tombol "Hapus semua" diklik
+    // ============================================
+    function clearAll() {
+
+      const konfirmasi = confirm("Hapus semua transaksi?")
+      // confirm(): tampilkan popup dengan tombol OK dan Batal
+      // Kalau user klik OK → hasilnya true
+      // Kalau user klik Batal → hasilnya false
+
+      if (konfirmasi) {
+        // hanya lanjut kalau user klik OK
+        localStorage.removeItem("transactions")
+        // .removeItem("transactions"): hapus data dengan key "transactions" dari localStorage
+        // Setelah ini localStorage tidak punya data transaksi lagi
+
+        render()
+        // perbarui tampilan → akan tampil pesan "Belum ada transaksi"
+      }
+    }
+
+
+    // ============================================
+    // KODE TERAKHIR: Jalankan render() saat halaman dibuka
+    // Ini yang membuat data langsung muncul saat halaman dibuka
+    // ============================================
+    render()
+    // Tanpa baris ini, halaman akan kosong walau ada data di localStorage
+
+  </script>
+  <!-- akhir <script> -->
+
+</body>
+<!-- akhir <body> -->
+
+</html>
+<!-- akhir <html> -->
