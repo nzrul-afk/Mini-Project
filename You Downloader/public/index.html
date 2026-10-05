@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YouDownloader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #14130f;
+    --panel-a: #2b2a27;
+    --panel-b: #201f1d;
+    --screen-bg: #0d1210;
+    --amber: #ffb020;
+    --amber-soft: #ffd37a;
+    --teal: #3ed6b5;
+    --text: #ede7da;
+    --text-muted: #8c877c;
+    --red: #ff5a4e;
+    --panel-border: rgba(255,255,255,0.07);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(ellipse 700px 400px at 50% -5%, rgba(255,176,32,0.10), transparent 60%),
+      var(--bg-page);
+  }
+
+  .deck {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    background: linear-gradient(160deg, var(--panel-a), var(--panel-b));
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 30px 28px 22px;
+    box-shadow: 0 40px 70px -30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+
+  .rivet {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #55524c, #100f0d);
+  }
+  .rivet.tl { top: 12px; left: 12px; }
+  .rivet.tr { top: 12px; right: 12px; }
+  .rivet.bl { bottom: 12px; left: 12px; }
+  .rivet.br { bottom: 12px; right: 12px; }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .brand svg { color: var(--amber); flex-shrink: 0; }
+  .brand h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+  .tagline {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0 0 22px;
+  }
+
+  .field-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 7px;
+  }
+
+  .input-row { display: flex; gap: 8px; margin-bottom: 22px; }
+
+  #urlInput {
+    flex: 1;
+    min-width: 0;
+    background: var(--screen-bg);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 12px 13px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--amber-soft);
+  }
+  #urlInput::placeholder { color: #4d5652; }
+  #urlInput:focus-visible, .pill:focus-visible, .btn:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { cursor: not-allowed; opacity: 0.5; transform: none; }
+
+  #checkBtn {
+    background: linear-gradient(160deg, #3a3936, #2a2926);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 0 18px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  #checkBtn:hover:not(:disabled) { filter: brightness(1.15); }
+
+  #result { display: none; }
+
+  .preview {
+    display: flex;
+    gap: 13px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  #thumbnail {
+    width: 92px; height: 92px;
+    object-fit: cover;
+    border-radius: 7px;
+    border: 1px solid rgba(255,176,32,0.25);
+    flex-shrink: 0;
+    background: var(--screen-bg);
+  }
+  .preview-info { min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
+  #title {
+    font-size: 14px; font-weight: 600; margin: 0;
+    display: -webkit-box; -webkit-line-clamp: 2;line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; line-height: 1.35;
+  }
+  #uploader { font-size: 12px; color: var(--text-muted); margin: 0; }
+  #duration {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    background: rgba(62,214,181,0.08);
+    border: 1px solid rgba(62,214,181,0.2);
+    padding: 2px 7px;
+    border-radius: 5px;
+    width: fit-content;
+  }
+
+  .segment-group { margin-bottom: 18px; }
+  .pills {
+    display: flex;
+    gap: 4px;
+    background: var(--screen-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 999px;
+    padding: 4px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    flex: 1;
+    min-width: 54px;
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .pill.active {
+    background: linear-gradient(160deg, var(--amber-soft), var(--amber));
+    color: #211c0f;
+    font-weight: 600;
+  }
+
+  #downloadBtn {
+    width: 100%;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #211c0f;
+    background: linear-gradient(160deg, var(--amber-soft), var(--amber));
+    box-shadow: 0 10px 24px -10px rgba(255,176,32,0.55);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  #downloadBtn:hover:not(:disabled) { filter: brightness(1.08); }
+
+  #progressWrap { display: none; margin-top: 18px; }
+  .progress-status {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  #stageText {
+    font-size: 12px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  #percentText {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 700; color: var(--amber);
+    text-shadow: 0 0 10px rgba(255,176,32,0.5);
+  }
+
+  .reel-spin { animation: spin 1.6s linear infinite; color: var(--amber); }
+  @media (prefers-reduced-motion: reduce) {
+    .reel-spin { animation: none; }
+    .btn, .pill, #lcdFill { transition: none; }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .lcd-track {
+    position: relative;
+    height: 22px;
+    background: var(--screen-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  #lcdFill {
+    position: absolute; inset: 0; width: 0%;
+    background: linear-gradient(90deg, var(--amber), var(--amber-soft));
+    box-shadow: 0 0 14px rgba(255,176,32,0.55);
+    transition: width 0.35s ease;
+  }
+  .lcd-segments {
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(90deg, transparent 0 5px, var(--screen-bg) 5px 7px);
+    pointer-events: none;
+  }
+
+  #errorBox {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,90,78,0.3);
+    background: rgba(255,90,78,0.08);
+    border-radius: 8px;
+    font-size: 12.5px;
+    color: #ffb3ab;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  #errorBox .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--red); margin-top: 4px; flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(255,90,78,0.7);
+  }
+
+  .footer-plate {
+    margin-top: 24px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+  }
+  .footer-plate p {
+    margin: 0;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #5f5c56;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <span class="rivet tl"></span><span class="rivet tr"></span>
+  <span class="rivet bl"></span><span class="rivet br"></span>
+
+  <div class="brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/>
+      <path d="M12 3v3M21 12h-3M12 21v-3M3 12h3"/>
+    </svg>
+    <h1>YOUDOWNLOADER</h1>
+  </div>
+  <p class="tagline">Ambil video atau audio dari sebuah link.</p>
+
+  <label class="field-label" for="urlInput">Link Sumber</label>
+  <div class="input-row">
+    <input type="text" id="urlInput" placeholder="https://www.youtube.com/watch?v=...">
+    <button class="btn" id="checkBtn" onclick="checkVideo()">Muat</button>
+  </div>
+
+  <div id="result">
+    <div class="preview">
+      <img id="thumbnail" src="" alt="">
+      <div class="preview-info">
+        <p id="title"></p>
+        <p id="uploader"></p>
+        <span id="duration"></span>
+      </div>
+    </div>
+
+    <div class="segment-group">
+      <span class="field-label">Format</span>
+      <div class="pills" id="formatPills">
+        <button class="pill active" data-format="mp4">Video</button>
+        <button class="pill" data-format="mp3">Audio</button>
+      </div>
+    </div>
+
+    <div class="segment-group">
+      <span class="field-label">Kualitas</span>
+      <div class="pills" id="qualityPills"></div>
+    </div>
+
+    <button class="btn" id="downloadBtn" onclick="downloadMedia()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+      <span id="downloadBtnLabel">Download Video</span>
+    </button>
+
+    <div id="progressWrap">
+      <div class="progress-status">
+        <span id="stageText">
+          <svg class="reel-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg>
+          <span id="stageLabel">Menyiapkan...</span>
+        </span>
+        <span id="percentText">000%</span>
+      </div>
+      <div class="lcd-track">
+        <div id="lcdFill"></div>
+        <div class="lcd-segments"></div>
+      </div>
+    </div>
+
+    <div id="errorBox"><span class="dot"></span><span id="errorText"></span></div>
+  </div>
+
+  <div class="footer-plate">
+    <p>Penggunaan pribadi & edukasi — hormati hak cipta pembuat</p>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://prompt-texas-bikes-inspiration.trycloudflare.com';
+let currentUrl = '';
+let currentEventSource = null;
+let selectedFormat = 'mp4';
+let selectedVideoQuality = '720';
+let selectedAudioQuality = '0';
+
+const videoQualities = [
+  { value: 'best', label: 'Terbaik' },
+  { value: '1080', label: '1080p' },
+  { value: '720', label: '720p' },
+  { value: '480', label: '480p' },
+  { value: '360', label: '360p' },
+];
+const audioQualities = [
+  { value: '0', label: 'Tinggi' },
+  { value: '5', label: 'Sedang' },
+  { value: '9', label: 'Rendah' },
+];
+
+function renderQualityPills() {
+  const list = selectedFormat === 'mp4' ? videoQualities : audioQualities;
+  const current = selectedFormat === 'mp4' ? selectedVideoQuality : selectedAudioQuality;
+  const container = document.getElementById('qualityPills');
+  container.innerHTML = '';
+
+  list.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'pill' + (item.value === current ? ' active' : '');
+    btn.textContent = item.label;
+    btn.onclick = () => {
+      if (selectedFormat === 'mp4') selectedVideoQuality = item.value;
+      else selectedAudioQuality = item.value;
+      renderQualityPills();
+    };
+    container.appendChild(btn);
+  });
+}
+
+document.getElementById('formatPills').addEventListener('click', (e) => {
+  const btn = e.target.closest('.pill');
+  if (!btn) return;
+  selectedFormat = btn.dataset.format;
+
+  document.querySelectorAll('#formatPills .pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('downloadBtnLabel').textContent =
+    selectedFormat === 'mp4' ? 'Download Video' : 'Download Audio';
+
+  renderQualityPills();
+});
+
+renderQualityPills();
+
+function formatDuration(sec) {
+  if (sec === undefined || sec === null) return '--:--';
+  sec = Math.round(sec);
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  const mm = String(m).padStart(2, '0');
+  const ss = String(s).padStart(2, '0');
+  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
+async function checkVideo() {
+  const url = document.getElementById('urlInput').value.trim();
+  const errorBox = document.getElementById('errorBox');
+  errorBox.style.display = 'none';
+
+  if (!url) {
+    document.getElementById('errorText').textContent = 'Masukkan link YouTube terlebih dahulu.';
+    errorBox.style.display = 'flex';
+    return;
+  }
+
+  currentUrl = url;
+  const checkBtn = document.getElementById('checkBtn');
+  checkBtn.disabled = true;
+  checkBtn.textContent = 'Memuat...';
+
+  try {
+    const res = await fetch(`${API_URL}/info`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Gagal mengambil info video');
+
+    document.getElementById('thumbnail').src = data.thumbnail;
+    document.getElementById('title').textContent = data.title;
+    document.getElementById('uploader').textContent = data.uploader;
+    document.getElementById('duration').textContent = formatDuration(data.duration);
+    document.getElementById('result').style.display = 'block';
+    document.getElementById('progressWrap').style.display = 'none';
+  } catch (err) {
+    document.getElementById('errorText').textContent = err.message;
+    errorBox.style.display = 'flex';
+  } finally {
+    checkBtn.disabled = false;
+    checkBtn.textContent = 'Muat';
+  }
+}
+
+function downloadMedia() {
+  const downloadBtn = document.getElementById('downloadBtn');
+  const errorBox = document.getElementById('errorBox');
+  const progressWrap = document.getElementById('progressWrap');
+  const lcdFill = document.getElementById('lcdFill');
+  const percentText = document.getElementById('percentText');
+  const stageLabel = document.getElementById('stageLabel');
+
+  errorBox.style.display = 'none';
+  downloadBtn.disabled = true;
+  progressWrap.style.display = 'block';
+  lcdFill.style.width = '0%';
+  percentText.textContent = '000%';
+  stageLabel.textContent = 'Menghubungkan...';
+
+  const params = new URLSearchParams({
+    url: currentUrl,
+    format: selectedFormat,
+    videoQuality: selectedVideoQuality,
+    audioQuality: selectedAudioQuality,
+  });
+
+  if (currentEventSource) currentEventSource.close();
+  const eventSource = new EventSource(`${API_URL}/download-progress?${params.toString()}`);
+  currentEventSource = eventSource;
+
+  eventSource.addEventListener('progress', (e) => {
+    const data = JSON.parse(e.data);
+    const percent = Math.round(data.percent);
+    lcdFill.style.width = percent + '%';
+    percentText.textContent = String(percent).padStart(3, '0') + '%';
+    stageLabel.textContent = data.stage === 'processing'
+      ? 'Menggabungkan audio & video...'
+      : 'Mengunduh media...';
+  });
+
+  eventSource.addEventListener('done', (e) => {
+    const data = JSON.parse(e.data);
+    lcdFill.style.width = '100%';
+    percentText.textContent = '100%';
+    stageLabel.textContent = 'Selesai — menyimpan file...';
+
+    window.location.href = `${API_URL}/get-file?name=${encodeURIComponent(data.filename)}`;
+    eventSource.close();
+    downloadBtn.disabled = false;
+  });
+
+  eventSource.addEventListener('ytdlp-error', (e) => {
+    const data = JSON.parse(e.data);
+    document.getElementById('errorText').textContent = data.message;
+    errorBox.style.display = 'flex';
+    progressWrap.style.display = 'none';
+    eventSource.close();
+    downloadBtn.disabled = false;
+  });
+
+  eventSource.onerror = () => {
+    document.getElementById('errorText').textContent = 'Koneksi terputus. Coba lagi.';
+    errorBox.style.display = 'flex';
+    progressWrap.style.display = 'none';
+    eventSource.close();
+    downloadBtn.disabled = false;
+  };
+}
+</script>
+
+</body>
+</html>

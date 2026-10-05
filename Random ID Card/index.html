@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Aesthetic Background</title>
+    <style>
+        /* ==========================================================================
+           1. RESET & BASE STYLES
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #040406; /* Hitam Onyx pekat khas luxury brand */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Mengunci posisi vertikal tepat di tengah layar */
+            align-items: center; /* Mengunci posisi horizontal tepat di tengah layar */
+            overflow: hidden;
+            perspective: 1200px; /* Memberikan kedalaman 3D untuk elemen di atasnya */
+        }
+
+        /* ==========================================================================
+           2. AESTHETIC LUXURY BACKGROUND (Ambient Aura Glow)
+           ========================================================================== */
+        .luxury-bg {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            z-index: -1;
+            background: radial-gradient(circle at 30% 35%, rgba(212, 175, 55, 0.07) 0%, transparent 45%),
+                        radial-gradient(circle at 70% 65%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.01) 0%, transparent 60%);
+            animation: ambientMove 25s ease-in-out infinite alternate;
+        }
+
+        @keyframes ambientMove {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(2%, 4%) scale(1.03) rotate(3deg); }
+            100% { transform: translate(-1%, -2%) scale(0.98) rotate(-2deg); }
+        }
+
+        /* ==========================================================================
+           3. TRANSISI MASUK YANG MEGAH (Cinematic Entrance)
+           ========================================================================== */
+        .luxury-content-wrapper {
+            opacity: 0;
+            /* Menggunakan scale & blur-in lembut agar posisi sumbu tengahnya tidak lari */
+            transform: scale(0.96) rotateX(4deg);
+            filter: blur(6px);
+            animation: luxuryEntrance 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        @keyframes luxuryEntrance {
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* ==========================================================================
+           4. WADAH KONTEN (Dinamis & Mengikuti Isinya)
+           ========================================================================== */
+        .placeholder-box {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(212, 175, 55, 0.18);
+            border-radius: 28px;
+            padding: 35px;
+            width: 36rem;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .isi {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Membuat baris tabel dan foto sejajar lurus secara vertikal */
+            gap: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            flex: 1;
+        }
+
+        table tr {
+            height: 32px; /* Mengatur jarak baris teks biodata agar rapi */
+        }
+
+        .td {
+            color: #a3a3a3; 
+            font-size: 16px; 
+            font-weight: 300;
+            text-align: left;
+        }
+
+        /* Kolom khusus titik dua agar lurus sempurna ke bawah */
+        .titik-dua {
+            color: rgba(212, 175, 55, 0.5);
+            padding: 0 12px;
+            width: 10px;
+        }
+
+        .gambar {
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            width: 9.5rem;
+            height: 11.5rem;
+            object-fit: cover; /* Menjaga foto Minji tetap proporsional/tidak gepeng */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ==========================================================================
+           5. TOMBOL RANDOM (Luxury Styling)
+           ========================================================================== */
+        .tombol {
+            margin-top: 2rem;
+            padding: 14px;
+            width: 36rem; /* Lebarnya disamakan persis dengan .placeholder-box agar simetris */
+            border-radius: 14px;
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            color: #d4af37; /* Teks warna emas mewah */
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tombol:hover {
+            background: rgba(212, 175, 55, 0.08);
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .tombol:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="luxury-bg"></div>
+
+    <div class="luxury-content-wrapper">
+        
+        <div class="placeholder-box">
+            <h2 style="font-weight: 400; letter-spacing: 3px; color: #d4af37; margin-bottom: 10px; font-size: 13px; text-align: center;">NAME CARD</h2>
+            <div class="isi">
+                <table>
+                    <tr>
+                        <td class="td">Name</td>
+                        <td class="titik-dua">:</td>
+                        <td class="td" style="color: #ffffff; font-weight: 400;" id="text-name">Minji</td>
+                    </tr>
+                    <tr>
+                        <td class="td">Major</td>
+                        <td class="titik-dua">:</td>
+                        <td class="td" id="text-major">Visual Communication Design</td>
+                    </tr>
+                    <tr>
+                        <td class="td">Birthdate</td>
+                        <td class="titik-dua">:</td>
+                        <td class="td" id="text-birthdate">May 7, 2004</td>
+                    </tr>
+                    <tr>
+                        <td class="td">Addresses</td>
+                        <td class="titik-dua">:</td>
+                        <td class="td" id="text-addresses">Seoul, South Korea</td>
+                    </tr>
+                    <tr>
+                        <td class="td">Hobby</td>
+                        <td class="titik-dua">:</td>
+                        <td class="td" id="text-hobby">Reading, Walking</td>
+                    </tr>
+                    <tr>
+                        <td class="td">Dream</td>
+                        <td class="titik-dua">:</td>
+                        <td class="td" id="text-dream">Global Artist</td>
+                    </tr>
+                    <tr>
+                        <td class="td">Motto</td>
+                        <td class="titik-dua">:</td>
+                        <td class="td" id="text-motto">Carpe Diem</td>
+                    </tr>
+                </table>
+                <img src="/img/minji.jpg" class="gambar" id="gambar" alt="Profile">
+            </div>
+        </div>
+
+        <button class="tombol" onclick="random1()">Random</button>
+
+    </div>
+
+    <script>
+        const listKandidat = [
+            {
+                name: "Ambatukam (Dreamybull)",
+                major: "Sains Per-ambasingan",
+                birthdate: "September 18, 1992",
+                addresses: "Batu, Jawa Timur",
+                hobby: "Berdonasi & Berteriak Histeris",
+                dream: "Menemukan 'Omaygot'",
+                motto: "Ambasing... Ambatukam...",
+                image: "img/download (14).jpg"
+            },
+            {
+                name: "Rusdi Ngawi",
+                major: "Teknik Otomotif (Spesialis Ban)",
+                birthdate: "Desember 12, 1995",
+                addresses: "Ngawi, Jawa Timur",
+                hobby: "Ganti Ban, Barber Rambut",
+                dream: "Membuka Cabang Rusdi Barber",
+                motto: "Kamu ganteng banget hari ini, Mas..",
+                image: "img/download (15).jpg"
+            },
+            {
+                name: "Mas Fuad",
+                major: "Sastra Karismatik Kegelapan",
+                birthdate: "Januari 1, 1990",
+                addresses: "Ngawi Core, Indonesia",
+                hobby: "Tersenyum Misterius di Pojokan",
+                dream: "Menjadi Saingan Terberat Rusdi",
+                motto: "Senyumanmu mengalihkan duniaku",
+                image: "img/Stiker jomok.jpg"
+            },
+            {
+                name: "GigaChad",
+                major: "Ilmu Kekar & Estetika Otot",
+                birthdate: "Februari 14, 1996",
+                addresses: "Gym Center Internasional",
+                hobby: "Mengabaikan Opini Lemah",
+                dream: "Menjadi Pria Paling Berkarisma",
+                motto: "Average enjoyer of everything",
+                image: "img/Sudah Siap.jpg"
+            },
+            {
+                name: "Ironi Rehan",
+                major: "Manajemen Cinta Bertepuk Sebelah Tangan",
+                birthdate: "Agustus 25, 2000",
+                addresses: "Binjai, Indonesia",
+                hobby: "Menunggu Rehan yang Begitu Syulit",
+                dream: "Bertemu Rehan secara Nyata",
+                motto: "Begitu syulit lupakan Rehan",
+                image: "img/download (13).jpg"
+            },
+            {
+                name: "Brandon Currington (Thugshaker)",
+                major: "Koreografi & Olah Tubuh",
+                birthdate: "Maret 22, 1988",
+                addresses: "Ohio, Amerika Serikat",
+                hobby: "Goyang Thugshaker, Olahraga",
+                dream: "Menghibur Seluruh Warga Ngawi",
+                motto: "Goyang terus sampai lupakan beban",
+                image: "img/download (12).jpg"
+            },
+            {
+                name: "King Ambatunat",
+                major: "Ilmu Gizi & Kuliner Kacang",
+                birthdate: "November 3, 1994",
+                addresses: "Nganjuk, Jawa Timur",
+                hobby: "Membeli & Mereview Kacang",
+                dream: "Membuka Pabrik Ambatunat",
+                motto: "Kacang ini rasanya sungguh... Omaygot",
+                image: "img/download (11).jpg"
+            },
+            {
+                name: "Ahmet Kaya (Brody Version)",
+                major: "Seni Musik Klasik & Akustik",
+                birthdate: "Oktober 28, 1957",
+                addresses: "Malang, Jawa Timur",
+                hobby: "Bernyanyi Sambil Menatap Kamera",
+                dream: "Lagunya Masuk Playlist Rusdi Barber",
+                motto: "Musik adalah bahasa jiwa yang jomok",
+                image: "img/download (10).jpg"
+            },
+            {
+                name: "Kak Gem",
+                major: "Filsafat & Motivasi Hidup Kelas Berat",
+                birthdate: "Juni 15, 1989",
+                addresses: "Medan, Sumatera Utara",
+                hobby: "Kasih Paham, Bersabda",
+                dream: "Semua Orang Paham dengan Kata-katanya",
+                motto: "Ingat! Hujan bisa mereda, tapi rindu...",
+                image: "img/download (9).jpg"
+            },
+            {
+                name: "Soleh Batubara",
+                major: "Geologi & Pertambangan Arang",
+                birthdate: "Juli 7, 1993",
+                addresses: "Solo, Jawa Tengah",
+                hobby: "Ngendok di Tempat Gelap",
+                dream: "Menemukan Tambang Emas Emas Hitam",
+                motto: "Tetap tenang walaupun keadaan memanas",
+                image: "img/Belum Siap.jpg"
+            }
+        ];
+        function random1() {
+            let angkaAcak = Math.floor(Math.random() * listKandidat.length);
+            const dataTerpilih = listKandidat[angkaAcak];
+            document.getElementById('text-name').innerText = dataTerpilih.name;
+            document.getElementById('text-major').innerText = dataTerpilih.major
+            document.getElementById('text-birthdate').innerText = dataTerpilih.birthdate;
+            document.getElementById('text-addresses').innerText = dataTerpilih.addresses;
+            document.getElementById('text-hobby').innerText = dataTerpilih.hobby;
+            document.getElementById('text-dream').innerText = dataTerpilih.dream;
+            document.getElementById('text-motto').innerText = dataTerpilih.motto;
+            document.getElementById('gambar').src = dataTerpilih.image;
+        }
+    </script>
+</body>
+</html>
