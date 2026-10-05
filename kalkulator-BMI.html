@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KALKULATOR BMI</title>
+    <style>
+        * {
+            margin: 0 ;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.5rem;
+            background-color: rgb(28, 42, 85);
+            position: relative;
+        }
+        .bercak {
+            position: absolute;
+            left: 0;
+            bottom: 10%;
+            z-index: -2;
+            rotate: 30deg;
+            width: 350px;
+            height: 350px;
+            background: rgba(53, 137, 206, 0.15);
+            filter: blur(30px);
+            backdrop-filter: blur(90px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        .bercak1 {
+            position: absolute;
+            right: 0;
+            z-index: -2;
+            rotate: 30deg;
+            width: 350px;
+            height: 350px;
+            background: rgba(53, 137, 206, 0.15);
+            filter: blur(30px);
+            backdrop-filter: blur(90px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+        .container {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+        .button {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* FIX LAYOUT INPUT & POSISI SATUAN */
+        .input {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 250px; /* Batasi lebar bungkus input agar serasi */
+        }
+        .satuan {
+            position: absolute;
+            right: 25px; /* Mengunci teks KG/CM di sebelah kanan dalam oval */
+            bottom: 22px; /* Menyelaraskan teks agar pas di tengah vertikal */
+            color: rgba(0, 0, 0, 0.6);
+            font-weight: bold;
+            pointer-events: none;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+        .judul {
+            width: 100%; /* Diubah ke 100% agar simetris di tengah */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .p {
+            margin: 10px;
+        }
+        
+        /* FIX UKURAN INPUT OVAL */
+        .inputb {
+            color: black;
+            width: 100%; /* Mengisi penuh kotak .input */
+            font-size: 20px;
+            background-color: aqua;
+            border: 5px solid rgb(20, 57, 177);
+            padding: 0.8rem 3.5rem 0.8rem 1.5rem; /* Padding kanan longgar agar angka tidak menabrak KG/CM */
+            margin-top: 10px;
+            border-radius: 40px;
+            outline: none;
+        }
+        #mabar {
+            background-color: aqua;
+            padding: 8px 20px;
+            border-radius: 30px;
+            color: rgb(55, 45, 45);
+        }
+        #gojo {
+            filter: drop-shadow(0 0 20px aqua);
+            position: absolute;
+            z-index: -2;
+            left: -10rem;
+        }
+        .anjay {
+            -webkit-text-stroke: 0.3px white;
+        }
+        
+        /* CSS ANIMASI WAW TOMBOL KAMU */
+        .tombol {
+            font-weight: 800;
+            font-family: system-ui, -apple-system, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 15px 60px;
+            font-size: 18px;
+            border-radius: 50px;
+            background: rgba(0, 242, 254, 0.2); 
+            border: 2px solid rgba(0, 242, 254, 0.6);
+            color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2), 
+                        inset 0 0 15px rgba(0, 242, 254, 0.1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .tombol:hover {
+            background: #00f2fe;
+            color: #1c2a55;
+            transform: translateY(-5px) scale(1.05); 
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.8), 
+                        0 0 60px rgba(0, 242, 254, 0.4);
+            border-color: transparent;
+        }
+        .tombol::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            transition: 0.6s;
+        }
+        .tombol:hover::after {
+            left: 100%;
+        }
+        .tombol:active {
+            transform: translateY(-1px) scale(0.98); 
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bercak"></div>
+    <div class="bercak1"></div>
+    <img src="Gojo-Satoru-anime-character-Jujutsu-Kaisen-transparent-png.png" id="gojo">
+    
+    <div class="content">
+        <div class="judul">
+            <h2 class="p">CALCULATOR BMI</h2>
+            <h3 class="p">BY NIELSEN</h3>
+            <p class="p" id="mabar">calculator ini untuk mengetahui apakah kamu orang yang ideal, kurus, atau gemuk dalam hal postur tubuh</p>
+        </div>
+        
+        <div class="container">
+            <div class="input">
+                <h3 class="anjay">Berat badan</h3>
+                <input class="inputb" id="bbcok" type="number">
+                <span class="satuan">KG</span>
+            </div>
+            <div class="input">
+                <h3 class="anjay">tinggi badan</h3>
+                <input class="inputb" id="tbcok" type="number">
+                <span class="satuan">CM</span>
+            </div>
+        </div>
+        
+        <div class="button">
+            <button class="tombol" onclick="hitung()" id="tombol">check</button> 
+        </div>
+    </div> 
+
+    <script>
+        function hitung() {
+            // Ambil elemen DOM utama di awal fungsi
+            const tomboll = document.getElementById('tombol');
+            const hasilnya = document.getElementById('mabar');
+            const containernya = document.querySelector('.container');
+            
+            const inputBB = document.getElementById('bbcok');
+            const inputTB = document.getElementById('tbcok');
+
+            // 1. GERBANG RESET: Jika tombol bertuliskan "CHECK LAGI", kembalikan semuanya ke posisi awal
+            if (tomboll.innerText === "CHECK LAGI") {
+                inputBB.value = "";
+                inputTB.value = "";
+                hasilnya.innerText = "calculator ini untuk mengetahui apakah kamu orang yang ideal, kurus, atau gemuk dalam hal postur tubuh";
+                containernya.style.display = 'flex';
+                tomboll.innerText = "check";
+                return; // Berhenti di sini, jangan hitung rumus matematika di bawah
+            }
+
+            // --- PROSES PERHITUNGAN BMI ---
+            const bbnya = parseFloat(inputBB.value);
+            const tbnya = parseFloat(inputTB.value);
+            
+            if (!bbnya || !tbnya) {
+                alert("Harap masukkan berat badan dan tinggi badan terlebih dahulu!");
+                return;
+            }
+            
+            const tbnyaa = tbnya / 100;
+            const rumusawal = tbnyaa * tbnyaa;
+            const rumuskedua = bbnya / rumusawal;
+            
+            // Sembunyikan form input angka saat hasil keluar
+            containernya.style.display = 'none';
+
+            // 2. MENGGANTI TEKS TOMBOL DI DALAM MASING-MASING IF-ELSE Sesuai Permintaanmu
+            if (rumuskedua < 18.5) {
+                hasilnya.innerText = 'anda termasuk orang yang "KURUS"';
+                tomboll.innerText = "CHECK LAGI"; // <-- Diatur langsung di dalam if kurus
+            } else if (rumuskedua >= 18.5 && rumuskedua <= 24.9) {
+                hasilnya.innerText = 'anda termasuk orang yang "IDEAL"';
+                tomboll.innerText = "CHECK LAGI"; // <-- Diatur langsung di dalam if ideal
+            } else if (rumuskedua >= 24.9 && rumuskedua <= 29.9) {
+                hasilnya.innerText = 'anda termasuk orang yang "GEMUK"';
+                tomboll.innerText = "CHECK LAGI"; // <-- Diatur langsung di dalam if gemuk
+            } else {
+                hasilnya.innerText = 'anda termasuk orang yang "OBESITAS"';
+                tomboll.innerText = "CHECK LAGI"; // <-- Diatur langsung di dalam else obesitas
+            }
+        }
+    </script>  
+</body>
+</html>

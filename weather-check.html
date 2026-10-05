@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            align-items: center;
+            justify-content: center;
+
+                /* ======================================================== */
+        /* LIVE BACKGROUND: MESH GRADIENT FUTURISTIK & GLOWING     */
+            /* ======================================================== */
+            background-color: #0d1117; /* Warna dasar super gelap modern */
+            background-image: 
+            radial-gradient(at 10% 20%, rgba(21, 75, 122, 0.6) 0px, transparent 50%),  /* Menyesuaikan warna kanvas kamu */
+            radial-gradient(at 90% 10%, rgba(255, 0, 128, 0.2) 0px, transparent 40%), /* Sentuhan magenta neon */
+            radial-gradient(at 80% 90%, rgba(0, 255, 170, 0.15) 0px, transparent 50%), /* Sentuhan hijau turquoise */
+            radial-gradient(at 0% 90%, rgba(255, 215, 0, 0.15) 0px, transparent 40%);  /* Sentuhan warna gold kuas */
+            
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* DEKORASI TAMBAHAN: Efek hiasan lingkaran abstrak di latar belakang */
+        body::before, body::after {
+            content: "";
+            position: absolute;
+            width: 25rem;
+            height: 25rem;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1; /* Biar ada di paling belakang */
+            opacity: 0.4;
+        }
+        body::before {
+            background: rgb(21, 75, 122);
+            top: -5%;
+            left: -5%;
+        }
+        body::after {
+            background: rgba(255, 215, 0, 0.4);
+            bottom: -10%;
+            right: -5%;
+        }
+        #input {
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 20px;
+            border: none;
+        }
+        .judul {
+            margin: 2rem;
+        }
+        #hasil {
+            background-color: white;
+            width: 20rem;
+            height: 20rem;
+            margin: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        #tombol {
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 20px;
+            border: none;
+        }
+        .cari {
+            display: flex;
+            gap: 20px;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <h2 class="judul">CHECK CUACA BERDASARKAN KOTA
+    </h2>
+    <div class="cari">
+        <input id="input" placeholder="Masukan Kota Anda">
+        <button id="tombol">Cari</button>
+    </div>
+    <div id="hasil">
+        <div id="ikon"></div>
+        <p id="nama-kota"></p>
+        <p id="suhu"></p>
+        <p id="suhu-min"></p>
+        <p id="suhu-max"></p>
+        <p id="deskripsi"></p>
+        <p id="kelembapan"></p>
+    </div>
+    <script>
+        const input = document.getElementById('input')
+        const tombol = document.getElementById('tombol')
+        tombol.addEventListener('click', function () {
+            const kota= input.value;
+            ambilCuaca(kota);
+        })
+        async function ambilCuaca(kota) {
+            const API_KEY = 'd3f799d72b39921fbca3f59f61f8445f';
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${kota}&appid=${API_KEY}&units=metric&lang=id`
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.cod === '404') {
+                    document.getElementById('hasil').innerText = 'kota tidak ditemukan';
+                    return;
+                }
+                const ikonURL = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+                document.getElementById('ikon').innerHTML = `<img src= "${ikonURL}">`;
+                document.getElementById('nama-kota').innerText = `Kota : ${data.name}, ${data.sys.country}`;
+                document.getElementById('suhu').innerText = `suhu : ${data.main.temp}`;
+                document.getElementById('suhu-min').innerText = `suhu-min : ${data.main.temp_min}`;
+                document.getElementById('suhu-max').innerText = `suhu-max : ${data.main.temp_max}`;
+                document.getElementById('deskripsi').innerText = `Cuaca : ${data.weather[0].main}`;
+                document.getElementById('kelembapan').innerText = `kelembapan : ${data.main.humidity}`;            
+            } catch (error) {
+               document.getElementById('hasil').innerText = 'terjadierror: ' + error.message;
+            }
+        }
+    </script>
+</body>
+
+</html>

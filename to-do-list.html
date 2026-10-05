@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODOLIST</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+            position: relative;
+            
+            /* 1. WARNA DASAR BACKGROUND (Gelap Elegan) */
+            background-color: #0d1117; 
+        }
+
+        /* 2. ANIMASI PERGERAKAN CAHAYA DI BACKGROUND */
+        @keyframes putarCahaya {
+            0% {
+                transform: translate(0px, 0px) rotate(0deg);
+            }
+            50% {
+                /* Bergerak geser sedikit ke kanan bawah dan membesar */
+                transform: translate(80px, 50px) scale(1.2) rotate(180deg);
+            }
+            100% {
+                transform: translate(0px, 0px) rotate(360deg);
+            }
+        }
+
+        @keyframes putarCahayaKedua {
+            0% {
+                transform: translate(0px, 0px) rotate(360deg);
+            }
+            50% {
+                /* Bergerak berlawanan arah */
+                transform: translate(-60px, -80px) scale(0.8) rotate(180deg);
+            }
+            100% {
+                transform: translate(0px, 0px) rotate(0deg);
+            }
+        }
+
+        /* 3. ELEMEN BULATAN CAHAYA NEON (BERCAK GLOWING) */
+        .bg-glow-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.25) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(60px); /* Bikin blur super halus */
+            z-index: -1;
+            animation: putarCahaya 25s infinite alternate ease-in-out;
+        }
+
+        .bg-glow-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(114, 9, 183, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+            filter: blur(60px);
+            z-index: -1;
+            animation: putarCahayaKedua 20s infinite alternate ease-in-out;
+        }
+
+        /* Trik Grid Garis ala Cyberpunk digital (Opsional tapi Keren) */
+        .bg-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .judul {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .button {
+            display: flex;
+            margin: 2rem;
+            gap: 3rem;
+        }
+        .tombol {
+            padding: 3rem;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+    <div class="content">
+        <div class="judul">
+            <h2 class="title">TODOLIST</h2>
+            <h3 class="jembud">ini hanyalah sebuah website untuk membantu anda menulis dan mencatat tugas-tugas anda.</h3>
+        </div>
+        <div class="button">
+            <button class="tombol" id="catat" onclick="mencatat()">CATAT TUGAS</button>
+            <button class="tombol" id="check" onclick="mengecheck()">CHECK TUGAS</button>
+        </div>
+    </div>    
+    <script>
+            let daftarTugas = []
+
+            const btnCheck = document.getElementById('check');
+            const btnCatat = document.getElementById('catat');
+            const judulnya = document.querySelector('.title');
+            const captionnya = document.querySelector('.jembud');
+        function mencatat() {
+            judulnya.innerHTML = 'CATAT TUGAS'
+            captionnya.style.display = 'none'
+            const kotakPesan = document.createElement('textarea')
+            kotakPesan.placeholder = "Ketik detail tugas To-Do List di sini...";
+            kotakPesan.rows = 10; // Menentukan tinggi kotak (4 baris)
+            kotakPesan.style.width = "35rem";
+            kotakPesan.style.padding = "2rem"
+            kotakPesan.style.margin = "30px"// Mengatur lebarnya lewat CSS
+            const wadahText = document.querySelector('.judul');
+            wadahText.appendChild(kotakPesan);
+            btnCatat.style.display = 'none'
+            btnCheck.style.display = 'none'
+
+            const wadahbutton = document.createElement('div')
+            wadahbutton.style.display = 'flex';
+            wadahbutton.style.gap = '1.5rem';
+            wadahbutton.style.marginBottom = '20px';
+
+            const addbtn = document.createElement('button')
+            addbtn.innerText = 'ADD TASK'
+            addbtn.className = 'tomboladd'
+            addbtn.style.padding = '1rem 2rem'
+            addbtn.onclick = function() {
+                const teksTugas = kotakPesan.value;
+                if (teksTugas.trim() === "") {
+                    alert ('MASAK MASUKIN TUGAS KOSONGAN');
+                    return;
+                }
+                daftarTugas.push(teksTugas);
+                alert ('TUGAS TERTAMBAHKAN');
+                kotakPesan.value = '';   
+            }
+
+            const clearbtn = document.createElement('button')
+            clearbtn.innerText = 'C';
+            clearbtn.className = 'tombolclear';
+            clearbtn.style.padding = '1.5rem'
+            clearbtn.style.backgroundColor = 'red'
+            clearbtn.onclick = function() {
+                kotakPesan.value = ''
+            }
+                        const exitbtn = document.createElement('button')
+            exitbtn.innerText = 'X';
+            exitbtn.className = 'tombolexit';
+            exitbtn.style.padding = '1.5rem'
+            exitbtn.style.backgroundColor = ''
+            exitbtn.onclick = function() {
+                btnCatat.style.display = 'block';
+                btnCheck.style.display = 'block';
+                captionnya.style.display = 'block';
+                kotakPesan.style.display = 'none';
+                addbtn.style.display = 'none';                
+                clearbtn.style.display = 'none';
+                exitbtn.style.display = 'none';                               
+            }
+            wadahbutton.appendChild(addbtn);
+            wadahbutton.appendChild(clearbtn)
+            wadahText.appendChild(wadahbutton)
+            wadahbutton.appendChild(exitbtn)
+        }
+        function mengecheck() {
+            btnCatat.style.display = 'none';
+            btnCheck.style.display = 'none';
+            captionnya.style.display = 'none'
+            const wadahTask = document.createElement('div')
+            wadahTask.style.backgroundColor = 'white';
+            wadahTask.style.width = '50rem';
+            wadahTask.style.height = '30rem';
+            wadahTask.style.margin = '1rem'; 
+            wadahTask.style.margin = '1rem';     
+            wadahTask.style.borderRadius = '10px'; 
+            const wadahText = document.querySelector('.judul');   
+            wadahText.appendChild(wadahTask)  
+            const listTugas = document.createElement('ol'); // 'ol' untuk daftar bernomor otomatis
+
+            listTugas.style.color = "black";
+            listTugas.style.textAlign = "left";
+            listTugas.style.margin = "20px 0";
+            listTugas.style.fontSize = "1.2rem";
+            listTugas.style.width = "100%"; // Mengikuti lebar maksimal wadah putih
+            listTugas.style.textAlign = "left";
+            listTugas.style.paddingLeft = "2rem";
+            listTugas.style.fontSize = "1.2rem";
+
+            // Tambahkan 2 baris ini agar tulisan otomatis ke bawah (break baris):
+            listTugas.style.wordBreak = "break-word"; 
+            listTugas.style.overflowWrap = "break-word";
+
+            const exitbtn = document.createElement('button');
+            exitbtn.innerText = 'X';
+            exitbtn.className = 'tombolexit';
+            exitbtn.style.padding = '1.5rem'
+            exitbtn.style.backgroundColor = ''
+            exitbtn.onclick = function() {
+                btnCatat.style.display = 'block';
+                btnCheck.style.display = 'block';
+                captionnya.style.display = 'block';
+                wadahTask.style.display = 'none';
+                exitbtn.style.display = ' none'
+            }
+            wadahText.appendChild(exitbtn)
+
+            if (daftarTugas.length === 0) {
+                const paragraft = document.createElement('p')
+                paragraft.innerText = 'Tugas anda kosong';
+                paragraft.style.padding = '30px';
+                paragraft.style.fontSize = '20px';
+                paragraft.style.color = 'black'
+                wadahTask.appendChild(paragraft)
+            } else {
+                daftarTugas.forEach(function(tugas) {
+                    const itemTugas =document.createElement('li');
+                    itemTugas.innerText =tugas;
+                    listTugas.appendChild(itemTugas)
+                    wadahTask.appendChild(listTugas)
+                })
+
+            }
+        }
+    </script>    
+</body>
+</html>

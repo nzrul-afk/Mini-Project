@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=d, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    .canvas {
+        background-color: rgb(21, 75, 122);
+        width: 40rem;
+        height: 25rem;
+    }
+    .canvas2 {
+        width: 40rem;
+        background-color: aliceblue;
+        height: 35rem;
+        position: absolute;
+    }
+    .koor {
+        margin: 1rem;
+        display: flex;
+        gap: 9rem;
+
+        bottom: 3rem;
+    }
+    .kok {
+        font-size: 20px;
+        width: 15rem;
+        background-color: rgb(49, 139, 192);
+        padding: 1rem;
+        border-radius: 20px;
+    }
+    .warna {
+
+        justify-content: center;
+        align-items: center;
+    }
+    .warna1 {
+        margin: 1rem;
+        border-radius: 50px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 5px 0 #b3b3b3; /* Efek tebal di bawah (bayangan tombol) */
+        transition: all 0.1s ease;
+    }
+    .warna1.aktif {
+        transform: translateY(5px); /* Menurunkan tombol ke bawah seolah dipencet */
+        box-shadow: 0 0px 0 transparent; /* Menghilangkan bayangan bawah agar rata tanah */
+        filter: brightness(0.8); /* Warnanya agak dibuat gelap tanda sedang aktif */
+    }
+    #biru {
+        background-color: aqua;
+    }
+    #kuning {
+        background-color: yellow;
+    }
+    #merah {
+        background-color: red;
+    }
+    #hijau {
+        background-color: green;
+    }
+    #hapus {
+        background-color: rgb(21, 75, 122);
+    }
+    /* 1. Atur tampilan teks ABBR utama */
+abbr[data-title] {
+    position: relative; /* Wajib, sebagai jangkar untuk kotak pop-up */
+    text-decoration: underline dotted gold; /* Ganti garis bawah bintik-bintik jadi warna emas */
+    cursor: help; /* Mengubah kursor mouse jadi tanda tanya (?) */
+    font-weight: bold;
+}
+
+/* 2. Bikin Kotak Tooltip Kustom (Awalnya Tersembunyi) */
+    abbr[data-title]::after {
+        content: attr(data-title); /* Mengambil teks yang ada di dalam data-title HTML */
+        position: absolute;
+        bottom: 125%; /* Memunculkan kotak tepat di atas teks */
+        left: 50%;
+        transform: translateX(-50%);
+        
+        /* Mulai hias sesuka hatimu di sini! */
+        background-color: #155c7a; /* Warna background kotak */
+        color: white; /* Warna tulisan */
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        white-space: nowrap; /* Mencegah teks turun ke bawah */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border: 1px solid gold;
+        
+        /* Efek Animasi Halus (Smooth Transition) */
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+/* 3. Tampilkan Kotak Saat Kursor Mouse Menempel (Hover) */
+    abbr[data-title]:hover::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-5px); /* Efek sedikit naik saat muncul */
+    }
+    .kontol {
+        width: 4rem;
+        height: 2rem;
+        padding: 1rem;
+
+    }
+    .font {
+        display: flex;
+        align-items: center;
+    }
+</style>
+<body>
+    <div class="warna">
+        <abbr data-title="blue"><button class="warna1" id="biru"> </button></abbr>
+        <abbr data-title="yellow"><button class="warna1" id="kuning"> </abbr></button></abbr>
+        <abbr data-title="red"> <button class="warna1" id="merah"></button></abbr>
+        <abbr data-title="green"><button class="warna1" id="hijau"> </button></abbr>
+        <abbr data-title="erase"><button class="warna1" id="hapus">hapus</button></abbr>
+    </div>
+    <div class="font">
+        <input type="number" class="kontol" placeholder=>
+    </div>
+    <canvas class="canvas" id="canvas"></canvas>
+    <div class="koor">
+        <h2 id="ex" class="kok">Koordinat-X:</h2>
+        <h2 id="ye" class="kok">Koordinat-Y:</h2>
+    </div>
+</body>
+<script>
+    const canvasnya = document.getElementById('canvas')
+    const ctx = canvasnya.getContext('2d')
+    let warnaKuas = 'black';
+    const semuaWarna = document.querySelectorAll('.warna1')
+    semuaWarna.forEach(function(tombol){
+    tombol.addEventListener('click', function(){
+        semuaWarna.forEach(b => b.classList.remove('aktif'))
+        tombol.classList.toggle('aktif')
+        const warnanya = window.getComputedStyle(tombol).backgroundColor
+        warnaKuas = warnanya
+    })
+
+    })
+    let fontSize = 5;
+    canvasnya.width = canvasnya.offsetWidth;
+    canvasnya.height = canvasnya.offsetHeight;
+    let sedangGambar = false;
+    canvasnya.addEventListener('mousedown', function (e) {
+    sedangGambar = true;
+    ctx.beginPath();
+    ctx.moveTo (e.offsetX, e.offsetY)
+    })
+    const kontol = document.querySelector('.kontol')
+    canvasnya.addEventListener('mousemove', function (e) {
+    if (!sedangGambar) return;
+    fontSize = kontol.value
+    ctx.lineWidth = fontSize;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round' ;
+    ctx.strokeStyle = warnaKuas
+    ctx.lineTo(e.offsetX, e.offsetY); 
+        
+        // Tebalkan garis gaib tersebut agar muncul warnanya di layar
+    ctx.stroke(); 
+    });
+
+    // 4. EVENT 3: Saat klik mouse DILEPAS (Berhenti Menggambar)
+    window.addEventListener('mouseup', function() {
+        sedangGambar = false; // Matikan mode menggambar
+    });
+
+    canvasnya.addEventListener ('mousemove',
+        function (e){
+            let ex = e.offsetX
+            let ye = e.offsetY
+            const xe = document.getElementById('ex')
+            const ey = document.getElementById('ye')
+            xe.innerHTML = `Koordinat-X: ${ex}`;
+            ey.innerText = `Koordinat-Y: ${ye}`;
+        }
+    )
+
+
+</script>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0; /* FIX: Ubah width: 0 menjadi margin: 0 agar tidak merusak ukuran elemen */
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            position: relative;
+            min-height: 100vh;
+            background-color: #0d1117; /* Mengubah warna background menjadi gelap agar garis putih transparan terlihat kontras */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: white; /* Mengubah warna teks utama menjadi putih agar terbaca */
+        }
+        .bercak {
+            position: absolute;
+            top: 0;
+            width: 50rem;
+            height: 10rem;
+            background-color: rgb(208, 192, 18);
+            filter: blur(70px);
+            rotate: 30deg;
+            z-index: 1; /* Mengatur susunan lapisan */
+        }
+        
+        /* FIX UTAMA PADA GRID */
+        .grid {
+            position: absolute; /* Membuat grid melayang di latar belakang */
+            top: 0;
+            left: 0;
+            width: 100%; /* Memaksa lebar grid memenuhi seluruh layar */
+            height: 100%; /* Memaksa tinggi grid memenuhi seluruh layar */
+            
+            /* KUNCI MEMBUAT GRID: Menggabungkan garis horizontal dan vertikal */
+            background-image: 
+                /* 1. Garis Horizontal (Mendatar) */
+                linear-gradient(rgba(225,225, 255, 0.05) 1px, transparent 1px),
+                /* 2. Garis Vertikal (Tegak) */
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+
+            /* MENGATUR UKURAN KOTAK: Mengatur lebar dan tinggi kotak grid (40px x 40px) */
+            background-size: 40px 40px;
+            z-index: 2; /* Berada di atas bercak tetapi di bawah konten utama */
+        }
+        
+        /* Memastikan konten utama berada di lapisan paling depan */
+        .konten {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        .judul {
+            margin: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .isi {
+            display: flex;
+        }
+        .kotakwarna {
+            color: #0d1117;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            align-items: center;
+            border-radius: 30px;
+            width: 8rem;
+            height: 8rem;
+            margin: 1rem;
+            background-color: #FFFFF0;
+        }
+        #tombol {
+            font-weight: 600;
+            font-size: 20px;
+            margin: 1rem;
+            padding: 0.6rem;
+            width: 100%;
+            border-radius: 30px;
+            border: 3px solid gold;
+        }
+    </style>
+</head>
+<body>
+    <div class="bercak"></div>
+    <div class="grid"></div>
+    <div class="konten">
+        <div class="judul">
+            <h2>COLOR PALETTE GENERATOR</h2>
+        </div>
+        <div>
+            <button id="tombol" onclick="ngacak()">SHAKE</button>
+        </div>
+        <div class="isi">
+            <div class="kotakwarna" id="one">#FFFFF0</div>
+            <div class="kotakwarna" id="two">#FFFFF0</div>
+            <div class="kotakwarna" id="three">#FFFFF0</div>
+            <div class="kotakwarna" id="four">#FFFFF0</div>
+            <div class="kotakwarna" id="five">#FFFFF0</div>
+        </div>
+    </div>
+    <script>
+const pencet = document.getElementById('tombol')
+        
+        // Fungsi pembuat warna acak
+        function buatWarna() {
+            const acak = Math.floor(Math.random() * 16777216).toString(16);
+            return '#' + acak.padStart(6, '0'); // Gunakan kutip string '0' agar standar
+        }
+
+        // Fungsi saat tombol SHAKE diklik
+        function ngacak() {
+            // FIX 1: Mengambil elemen berdasarkan class HTML dengan benar menjadi Array
+            const semuaKotak = document.querySelectorAll('.kotakwarna');
+            
+            // FIX 2: Kurung kurawal membungkus seluruh perintah ganti warna
+            for (let i = 0; i < semuaKotak.length; i++) {
+                const warnaBaru = buatWarna();
+                
+                // Mengubah warna background kotak sesuai indeks i
+                semuaKotak[i].style.backgroundColor = warnaBaru;
+                
+                // FIX 3: Menghapus kata '.style' pada innerText untuk mengubah tulisan kode Hex
+                semuaKotak[i].innerText = warnaBaru.toUpperCase();
+            } // <-- Kurung penutup for dipindahkan ke sini agar perulangan bekerja penuh
+        }
+    </script>
+</body>
+</html>
