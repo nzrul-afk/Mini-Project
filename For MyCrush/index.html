@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR MY CRUSH</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100vw;
+            height: 100vh;
+            position:relative;
+            background-color: pink;
+            overflow: hidden;
+        }
+        .bercak1 {
+            position:absolute;
+            background-color: palevioletred;
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -100px;
+            filter: blur(90px);
+
+        }
+        .bercak2 {
+            position:absolute;
+            background-color: palevioletred;
+            width: 400px;
+            height: 400px;
+            bottom: -600px;
+            left: -100px;
+            filter: blur(90px);
+            z-index: 1;
+        }
+        .bercak3 {
+            position: absolute;
+            top: 10px;
+            right: 400px;
+            background-color: gold;
+            filter: blur(90px);
+            width: 700px;
+            height: 700px;
+            z-index: -1;
+        }
+        .content{
+            width: 100%;
+            box-sizing: border-box;
+
+            font-family:monospace;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+        .pembukaan {
+            line-height: 2rem;
+        }
+        .emote {font-size: 30px;}
+        .pilihan {
+            margin: 1rem;
+        }
+        .etombol {
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 30px;
+            background-color: palevioletred;
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            transition: 0.5s ease;
+        }
+        .etombol:hover {
+            background-color: rgb(178, 66, 125);
+            color: grey;
+        }
+        .gambar {
+            margin-top: 1rem;
+            width:200px;
+            border-radius: 20px;
+        }
+        #mau {
+            transition: 0.6s ease;
+        }
+        #mau:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 50px palevioletred;
+        }
+    </style>
+</head>
+<body>
+    <audio id="musik" loop>
+        <source src="/song/glue song.mp3" type="audio/mpeg">
+    </audio>
+    <div class="bercak1"></div>
+    <div class="bercak2"></div>
+    <div class="bercak3"></div>
+    <div class="content">
+        <div class="pembukaan">
+            <h2 id="hay">Hayy Kamu</h2>
+            <p id="sebenarnya">sebenarnya aku maw jujur sama kamu<p>
+            <h2 id="pertanyaan">kamu mau ga jadi pacar aku?</h2>
+        </div>
+        <div class="emote">
+            <img src="/gambar/thumbnail.gif" class="gambar">
+        </div>
+        <div class="pilihan">
+            <button class="etombol" id="mau" onclick="terimakasih()">mau</button>
+            <button class="etombol" id="enggak" onclick="enggakkok()">enggak</button>
+        </div>
+    </div>
+    <script>
+        const daftarKata = [
+                    "eh, yakin?",            // Klik ke-1 (Indeks 0)
+                    "serius?",              // Klik ke-2 (Indeks 1)
+                    "beneran tega nih 🥺",   // Klik ke-3 (Indeks 2)
+                    "coba pikir pikir lagi deh", // Klik ke-4 (Indeks 3)
+                    "ih kok masih dipencet sih?!",
+                    "pliss pencet tombol kiri aja 😭",
+                    "yaudah deh aku pasrah..."
+                ];
+        const daftarGambar = [
+                    "/gambar/1.jpg",
+                    "/gambar/2.gif",
+                    "/gambar/3.gif",
+                    "/gambar/4.gif",
+                    "/gambar/5.gif",
+                    "/gambar/6.gif",
+                    "/gambar/7.gif"
+                 ];
+        let indexKata = 0;
+        function enggakkok() {
+            const btnNggak =document.getElementById('enggak')
+            const btnmau =document.getElementById('mau')
+            const gambarKucing =document.querySelector('.gambar')
+            if (indexKata < daftarKata.length) {
+                btnNggak.innerText = daftarKata[indexKata];
+                let ukuranSekaran = window.getComputedStyle(btnNggak).fontSize;
+                let ukuranBar =parseFloat(ukuranSekaran) - 3;
+                btnNggak.style.fontSize = ukuranBar + 'px';
+                btnNggak.style.padding = (ukuranBar / 2) + 'px' + ukuranBar +'px';
+                let ukuranSekarang = window.getComputedStyle(btnmau).fontSize;
+                let ukuranBaru =parseFloat(ukuranSekarang) + 20;
+                btnmau.style.fontSize = ukuranBaru + 'px';
+                btnmau.style.padding = (ukuranBaru / 2) + 'px' + ukuranBaru +'px';
+                gambarKucing.src = daftarGambar[indexKata]
+                indexKata++;
+                
+            } else {
+                btnNggak.style.display = 'none';
+                document.getElementById('pertanyaan').innerText = "Tuh kan, pilihan Nggak udah abis. Sekarang tinggal tombol MAU!";
+            }
+        }
+            function terimakasih() {
+                const title = document.getElementById('hay')
+                const titleJuga = document.getElementById('sebenarnya')
+                const ucapan = document.getElementById('pertanyaan')
+                const tombolnya = document.querySelector('.pilihan')
+                const gambarnya = document.querySelector('.gambar')
+                title.style.display = 'none';
+                tombolnya.style.display = 'none'
+                titleJuga.style.display = 'none';
+                ucapan.innerHTML = 'yeyeyeye kita akhirnya jadian, beneran loh ini <br> I LOVE YOUUUUUUUU ❤️ <br>tunggu bentar yaa';
+                gambarnya.src = "/gambar/terimakasih.gif";
+                let waktuSisa = 5; // Mulai dari angka 5
+                const elemenAngka = document.getElementById('countdown');
+
+                const hitungMundur = setInterval(function() {
+                    waktuSisa--; // Kurangi angka 1 demi 1
+                    elemenAngka.innerText = waktuSisa; // Update angka di layar
+
+                    // Jika angka sudah menyentuh 0, hentikan hitungan mundur
+                    if (waktuSisa <= 0) {
+                        clearInterval(hitungMundur);
+                    }
+                }, 1000);
+                setTimeout(function() {
+                // Ganti nomor di bawah dengan nomor WhatsApp kamu (awali dengan 62, jangan pakai angka 0)
+                // Kamu juga bisa menyelipkan teks pesan otomatis setelah bagian &text=
+                window.location.href = "https://api.whatsapp.com/send?phone=6285859735735&text=Aku%20mau%20kok%20jadi%20pacar%20kamu!%20%E2%9D%A4%EF%B8%8F";
+                }, 10000)
+            }
+            document.body.addEventListener('click', function () {
+                document.getElementById('musik').play();
+            }, { once: true });
+            
+    </script>
+</body>
+</html>
